@@ -1,0 +1,52 @@
+QMainWindow{
+	background:white;
+}
+ListPlaylists{
+	border:none;
+	background:white;
+}
+/* dlaczego danie tu innego tła psuje działanie suwaka? */
+QScrollBar:vertical{
+	width:70px;
+}
+/* strzałka cofania */
+QScrollBar::sub-line:vertical{
+	background:white;
+}
+/* strzałka do przodu */
+QScrollBar::add-line:vertical{
+	background:white;
+}
+QScrollBar::handle:vertical{
+	background:#cccccc;
+}
+
+/* odnosi się też do przycisków, ograniczyć to jakoś. Nadpiasłem regułe niżej */
+QWidget{
+	border:none;
+}
+QPushButton{
+	border:1px solid silver;
+}
+QListView{
+	font-size:20px;
+}
+QListView::item{
+    padding:20px;
+    margin-bottom:10px;
+    background:#f9f9f7;
+    border:1px solid #f4f4f2;
+}
+QListView::item:selected{
+    background:#f9f9f7;
+    color:black;
+}
+
+
+#Kamera{
+
+}
+QPushButton:hover:!pressed
+{
+  /*border:3px solid red; działa linijka, rozwinąć to*/
+}

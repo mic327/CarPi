@@ -1,0 +1,30 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>back.png</file>
+        <file>camcorder.png</file>
+        <file>camera.png</file>
+        <file>close.png</file>
+        <file>desktop.png</file>
+        <file>favourited.png</file>
+        <file>google_chrome.png</file>
+        <file>gps.png</file>
+        <file>memory_card.png</file>
+        <file>multimedia.png</file>
+        <file>netflix.png</file>
+        <file>pendrive.png</file>
+        <file>playlist.png</file>
+        <file>radio.png</file>
+        <file>record.png</file>
+        <file>search.png</file>
+        <file>settings.png</file>
+        <file>spotify.png</file>
+        <file>stop.png</file>
+        <file>tv.png</file>
+        <file>VLC.png</file>
+        <file>youtube.png</file>
+        <file>backward.png</file>
+        <file>forward.png</file>
+        <file>add.png</file>
+        <file>delete.png</file>
+    </qresource>
+</RCC>
