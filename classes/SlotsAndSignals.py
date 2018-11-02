@@ -5,9 +5,8 @@ import os
 from PyQt5.QtWidgets import *
 from PyQt5 import *
 import sys
-from PyQt5.QtCore import QObject, pyqtSignal
-
-
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import QThread
 
 #Moduły aplikacji
 from forms import blank_window
@@ -314,7 +313,6 @@ class SelectFMWindow(QMainWindow, blank_window.Ui_BlankWindow):
 		else:
 			self.ButtonPrev.hide()
 			self.LabelBackward.hide()
-		
 		try:
 			self.ButtonNext
 		except:
@@ -359,39 +357,57 @@ class RadioPlayWindow(QMainWindow, radio_play_window.Ui_RadioPlayWindow):
 		self.PIDarecord=self.get_pid("arecord")
 		if(isinstance(self.PIDarecord, int) and FMName==StationPlayed):
 			#Rysuję przycisk stop nagrywania
-			self.drawControlFMButton("Stop nagrywania",627,"#fe022c","stop.png",kind)
+			self.StopButton=self.drawControlFMButton("Stop nagrywania",627,350,"#fe022c","stop.png")
+			self.StopButton.show()
+			#dodanie slotu
+			self.StopButton.clicked.connect(lambda: self.useControlFMButton(self.sender().objectName()))
 			#dodaje rysowanie etykiety
-			self.drawControlButtonLabel(627,"Zatrzymaj nagrywanie")
+			self.StopLabel=self.drawControlButtonLabel(627,510,"Zatrzymaj nagrywanie")
+			self.StopLabel.show()
 		else:
 			#Rysuję przycisk start nagrywania
-			self.drawControlFMButton("Nagrywaj",627,"#016285","record.png",kind)
+			self.RecordButton=self.drawControlFMButton("Nagrywaj",627,350,"#016285","record.png")
+			self.RecordButton.show()
+			#dodanie slotu
+			self.RecordButton.clicked.connect(lambda: self.useControlFMButton(self.sender().objectName()))
 			#dodaje rysowanie etykiety
-			self.drawControlButtonLabel(627,"Nagrywaj")
+			self.RecordLabel=self.drawControlButtonLabel(627,510,"Nagrywaj")
+			self.RecordLabel.show()
 
-
-
-		
 		#najpierw muszę sprawdzić stacja jest w ulubionych
 		#trzeba wysłać zapytanie do bazy i sprawdzić, czy jest w ulubionych
 		self.isFavourited=self.ListStationsObject.isStationFavourited(FMName)
 		if(self.isFavourited==0):
 			#Rysuję przycisk Ulubione
-			self.drawControlFMButton("Ulubione",247,"#8214d0","favourited.png",kind)
+			self.FavouritedButton=self.drawControlFMButton("Ulubione",247,350,"#8214d0","favourited.png")
+			self.FavouritedButton.show()
+			#Dodanie slotu
+			self.FavouritedButton.clicked.connect(lambda: self.useControlFMButton(self.sender().objectName()))
 			#Etykieta
-			self.drawControlButtonLabel(247,"Ulubione")
+			self.FavouritedLabel=self.drawControlButtonLabel(247,510,"Ulubione")
+			self.FavouritedLabel.show()
 			#Rysuję przycisk usuń/dodaj do ulubionych
-			self.drawControlFMButton("Dodaj",437,"#13de00","add.png",kind)
+			self.AddtoFavouritedButton=self.drawControlFMButton("Dodaj",437,350,"#13de00","add.png")
+			self.AddtoFavouritedButton.show()
 			#dodaje rysowanie etykiety
-			self.drawControlButtonLabel(437,"Dodaj do ulubionych")
+			self.AddtoFavouritedLabel=self.drawControlButtonLabel(437,510,"Dodaj do ulubionych")
+			self.AddtoFavouritedLabel.show()
 		else:
 			#Rysuję przycisk Normalne
-			self.drawControlFMButton("Normalne",247,"#26d8fc","radio.png",kind)
+			self.NormalButton=self.drawControlFMButton("Normalne",247,350,"#26d8fc","radio.png")
+			#Dodanie slotu 
+			self.NormalButton.clicked.connect(lambda: self.useControlFMButton(self.sender().objectName()))
 			#dodaje rysowanie etykiety
-			self.drawControlButtonLabel(247,"Normalne")		
+			self.NormalLabel=self.drawControlButtonLabel(247,510,"Normalne")	
+			self.NormalLabel.show()	
 			#usuń z ulubionych
-			self.drawControlFMButton("Usun",437,"#fe022c","delete.png",kind)
+			self.DeleteFromFavouritedButton=self.drawControlFMButton("Usun",437,350,"#fe022c","delete.png")
+			self.DeleteFromFavouritedButton.show()
+			#Dodanie slotu
+			self.DeleteFromFavouritedButton.clicked.connect(lambda: self.useControlFMButton(self.sender().objectName()))
 			#dodaje rysowanie etykiety
-			self.drawControlButtonLabel(437,"Usuń z ulubionych")
+			self.DeleteFromFavouritedLabel=self.drawControlButtonLabel(437,510,"Usuń z ulubionych")
+			self.DeleteFromFavouritedLabel.show()
 		self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 		self.setStyleSheet(open("resources/style.qss", "r").read()) 
 		
@@ -486,27 +502,25 @@ class RadioPlayWindow(QMainWindow, radio_play_window.Ui_RadioPlayWindow):
 			self.close()
 			self.dialog = RadioPlayWindow(FMName,"normal")
 			self.dialog.show()
-			
-			
+
 	#rysuję przycisk w widoku stacji
 	#Ulubione/Normalne
 	#dodaj/usuń z ulubionych
 	#nagrywaj/zatrzymaj nagrywanie
-	def drawControlFMButton(self,objectname,offset_x,background,image,kind):
+	def drawControlFMButton(self,objectname,offset_x,offset_y,background,image):
 		self.ControlFMButton=QPushButton(self)
-		self.ControlFMButton.setGeometry(QtCore.QRect(offset_x, 350, 150, 150))
+		self.ControlFMButton.setGeometry(QtCore.QRect(offset_x, offset_y, 150, 150))
 		self.ControlFMButton.setStyleSheet("QPushButton{background:"+str(background)+" url(:/images/"+str(image)+")}")
 		self.ControlFMButton.setObjectName(objectname)
-		self.ControlFMButton.clicked.connect(lambda: self.useControlFMButton(self.sender().objectName()))
-		self.ControlFMButton.show()
+		return self.ControlFMButton
 
 	#to samo tylko, że dla etykiet tych przycisków
-	def drawControlButtonLabel(self,offset_x,label):
+	def drawControlButtonLabel(self,offset_x,offset_y,label):
 		self.ControlFMButtonLabel=QtWidgets.QLabel("sd",self)
-		self.ControlFMButtonLabel.setGeometry(QtCore.QRect(offset_x, 510, 181, 31))
+		self.ControlFMButtonLabel.setGeometry(QtCore.QRect(offset_x, offset_y, 181, 31))
 		_translate = QtCore.QCoreApplication.translate
 		self.ControlFMButtonLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">"+str(label)+"</span></p><p><br/></p></body></html>"))
-		self.ControlFMButtonLabel.show()
+		return self.ControlFMButtonLabel
 	#funkcję zwraca pid procesu, np pid procesu arecord
 	#służy do sprawdzenia czy jakaś stacja jest już nagrywana
 	def get_pid(self,name):
@@ -560,62 +574,114 @@ class CamcorderWindow(QMainWindow, camcorder_window.Ui_CamcorderWindow):
 	#która wyświetla formularz przedniej kamery (rejestrator)
 	def showFrontCamcorderForm(self):
 		self.dialog = FrontCamcorderWindow()
-		self.dialog.show()
 	#analogicznie formularz kamery cofania
 	def showBackCamcorderForm(self):
 		self.dialog = BackCamcorderWindow()
-		self.dialog.show()
 
 
 #Klasa odpowiadająca za FrontCamcorderWindow, czyli za forms/front_camcorder_window.py
 #widok formularza przedniej kamery (rejestratora)
-from forms import front_camcorder_window
-class FrontCamcorderWindow(QMainWindow, front_camcorder_window.Ui_FrontCamcorderWindow):
+from classes.Camera import Camera
+class FrontCamcorderWindow(QMainWindow, blank_window.Ui_BlankWindow):
 	def __init__(self):
 		super(self.__class__, self).__init__()
 		self.setupUi(self) 
-		#przypisuje konkretną funkcję do przycisku i sygnał
-		self.Preview_Front_Camcorder.clicked.connect(lambda: self.previewFrontCamcorder())		
-		self.Stop_Record.clicked.connect(lambda: self.stopRecord())
-		self.Start_Record.clicked.connect(lambda: self.startRecord())
 		self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-		self.setStyleSheet(open("resources/style.qss", "r").read()) 
+		self.setStyleSheet(open("resources/style.qss", "r").read())
+		#wyświetlam pusty formularz, na którym się wyświetli stream z kamery
+		self.show()
+		
+		self.Back.clicked.connect(lambda: self.closeFrontCamcorderStream())
+
+		#tworze etykiete, w której wyświetlą się ramki QPixmap "pobrane" z kamerki
+		self.VideoLabel = QLabel(self)
+		#ustalam pozycję i wymiary: x, y, szerokość, wysokość
+		self.VideoLabel.setGeometry(QtCore.QRect(0, 0, 840, 540))
+
+		#tworze nowy wątek
+		self.ThreadStream = QThread()
+		#tworzę obiekt, który dziedziczy po QObject
+		#dzięki niemu będzie możliwość obsługi slotów i sygnałów
+		self.WorkerStream = Camera("/dev/FrontCamcorder")
+		
+		#jeśli obiekt klasy Camera wyślę sygnał "StreamSignal", który zawiera w sobie obiekt QPixmap
+		#to funkcja streamFromFrontWebcam() go obsłuży
+		#czyli "wklei" go do etykiety VideoLabel, a potem tę etykietę wyświetli
+		self.WorkerStream.StreamSignal.connect(self.streamFromFrontWebcam)
+		
+		#przenoszę obiekt WorkerStream do nowego wątku
+		self.WorkerStream.moveToThread(self.ThreadStream)
+		
+		#jeśli obiekt klasy Camera, wyślę sygnał FinishedSignal, to wątek, który obsługiwał streamowanie się zakończy
+		self.WorkerStream.FinishedSignal.connect(self.ThreadStream.quit)
+		
+		#jeśli nowy wątek zostanie uruchomiony to
+		#zostanie wykonana funkcja startFrontCamcorderStream() z klasy Camera 
+		self.ThreadStream.started.connect(self.WorkerStream.startCamcorderStream)
+		
+		#uruchamiam nowy wątek
+		self.ThreadStream.start()
 	
-	#funkcję(sloty) do obsługi przycisków
-	def previewFrontCamcorder(self):
-		ViewFrontCamcorder=" "
-		os.system(ViewFrontCamcorder)
-	def stopRecord(self):
-		pass
-	def startRecord(self):
-		pass
+	#funkcja zamykająca stream z kamerki
+	def closeFrontCamcorderStream(self):
+		os.system("rm temp/stream")
+		self.close()
+	#slot, który wyświetla w etykiecie VideoLabel obiekt QPixmap otrzymany od obiektu klasy Camera
+	def streamFromFrontWebcam(self,ResizedFrame):
+		self.VideoLabel.setPixmap(ResizedFrame)
+		self.VideoLabel.show()
 
 
 #Klasa odpowiadająca za BackCamcorderWindow, czyli za forms/back_camcorder_window.py
 #analogicznie dla kamery cofania
-from forms import back_camcorder_window
-class BackCamcorderWindow(QMainWindow, back_camcorder_window.Ui_BackCamcorderWindow):
+class BackCamcorderWindow(QMainWindow, blank_window.Ui_BlankWindow):
 	def __init__(self):
 		super(self.__class__, self).__init__()
 		self.setupUi(self) 
-		#przypisuje konkretną funkcję do przycisku i sygnał
-		self.Preview_Back_Camcorder.clicked.connect(lambda: self.previewBackCamcorder())		
-		self.Stop_Record.clicked.connect(lambda: self.stopRecord())
-		self.Start_Record.clicked.connect(lambda: self.startRecord())
 		self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 		self.setStyleSheet(open("resources/style.qss", "r").read()) 
+		self.show()
+		
+		self.Back.clicked.connect(lambda: self.closeBackCamcorderStream())
+		
+		#tworze etykiete, w której wyświetlą się ramki QPixmap "pobrane" z kamerki
+		self.VideoLabel = QLabel(self)
+		#ustalam pozycję i wymiary: x, y, szerokość, wysokość
+		self.VideoLabel.setGeometry(QtCore.QRect(0, 0, 840, 540))
+		
+		#tworze nowy wątek
+		self.ThreadStream = QThread()
+		#tworzę obiekt, który dziedziczy po QObject
+		#dzięki niemu będzie możliwość obsługi slotów i sygnałów
+		self.WorkerStream = Camera("/dev/BackCamcorder")
+		
+		#jeśli obiekt klasy Camera wyślę sygnał "StreamSignal", który zawiera w sobie obiekt QPixmap
+		#to funkcja streamFromBackWebcam() go obsłuży
+		#czyli "wklei" go do etykiety VideoLabel, a potem tę etykietę wyświetli
+		self.WorkerStream.StreamSignal.connect(self.streamFromBackWebcam)
+		
+		#przenoszę obiekt WorkerStream do nowego wątku
+		self.WorkerStream.moveToThread(self.ThreadStream)
+		
+		#jeśli obiekt klasy Camera, wyślę sygnał FinishedSignal, to wątek, który obsługiwał streamowanie się zakończy
+		self.WorkerStream.FinishedSignal.connect(self.ThreadStream.quit)
+		
+		#jeśli nowy wątek zostanie uruchomiony to
+		#zostanie wykonana funkcja startCamcorderStream() z klasy Camera 
+		self.ThreadStream.started.connect(self.WorkerStream.startCamcorderStream)
+		
+		#uruchamiam nowy wątek
+		self.ThreadStream.start()
+
 	
-	#funkcję(sloty) do obsługi przycisków
-	#tego jeszcze nie ma
-	#ale będzie pewnie wykykorzystane Open CV do podglądu z kamery
-	def previewBackCamcorder(self):
-		#ViewBackCamcorder="vlc v4l2:///dev/video0:width=320:height=240"
-		ViewBackCamcorder="vlc "
-		os.system(ViewBackCamcorder)
-	def stopRecord(self):
-		pass
-	def startRecord(self):
-		pass
+	#funkcja zamykająca stream z kamerki
+	def closeBackCamcorderStream(self):
+		os.system("rm temp/stream")
+		self.close()
+	#slot, który wyświetla w etykiecie VideoLabel obiekt QPixmap otrzymany od obiektu klasy Camera
+	def streamFromBackWebcam(self,ResizedFrame):
+		self.VideoLabel.setPixmap(ResizedFrame)
+		self.VideoLabel.show()
 
 
 #Klasa odpowiadająca za CameraWindow, czyli za forms/camera_window
@@ -636,48 +702,130 @@ class CameraWindow(QMainWindow, camera_window.Ui_CameraWindow):
 	#funkcję(sloty) do obsługi przycisków
 	def showFrontCameraForm(self):
 		self.dialog = FrontCameraWindow()
-		self.dialog.show()
 	def showBackCameraForm(self):
 		self.dialog = BackCameraWindow()
-		self.dialog.show()
 
 #Klasa odpowiadająca za FrontCameraWindow, czyli za forms/front_camera_window.py
-from forms import front_camera_window
-class FrontCameraWindow(QMainWindow, front_camera_window.Ui_FrontCameraWindow):
+class FrontCameraWindow(QMainWindow, blank_window.Ui_BlankWindow):
 	def __init__(self):
 		super(self.__class__, self).__init__()
 		self.setupUi(self) 
 
-		#przypisuje konkretną funkcję do przycisku i sygnał
-		self.Take_Photo.clicked.connect(lambda: self.takePhoto())
-		self.Sequence_Photos.clicked.connect(lambda: self.takeSequencePhotos())
 		self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 		self.setStyleSheet(open("resources/style.qss", "r").read())
-	
-	#funkcję(sloty) do obsługi przycisków
+		self.show()
+
+		self.Back.clicked.connect(lambda: self.closeFrontCamcorderStream())
+		
+		#tworze etykiete, w której wyświetlą się ramki QPixmap "pobrane" z kamerki
+		self.VideoLabel = QLabel(self)
+		#ustalam pozycję i wymiary: x, y, szerokość, wysokość
+		self.VideoLabel.setGeometry(QtCore.QRect(0, 0, 840, 540))
+		
+		#Rysuję przycisk zrób zdjęcie
+		self.TakePhoto=RadioPlayWindow.drawControlFMButton(self,"TakePhoto",860,160,"#26d8fc","camera.png")
+		self.TakePhoto.clicked.connect(lambda: self.takePhoto())
+		self.TakePhoto.show()
+		#dodaje rysowanie etykiety
+		self.TakePhotoLabel=RadioPlayWindow.drawControlButtonLabel(self,860,320,"Zrób zdjęcie")
+		self.TakePhotoLabel.show()
+		
+		#tworze nowy wątek
+		self.ThreadStream = QThread()
+		#tworzę obiekt, który dziedziczy po QObject
+		#dzięki niemu będzie możliwość obsługi slotów i sygnałów
+		self.WorkerStream = Camera("/dev/FrontCamcorder")
+		
+		#jeśli obiekt klasy Camera wyślę sygnał "StreamSignal", który zawiera w sobie obiekt QPixmap
+		#to funkcja streamFromWebcam() go obsłuży
+		#czyli "wklei" go do etykiety VideoLabel, a potem tę etykietę wyświetli
+		self.WorkerStream.StreamSignal.connect(self.streamFromFrontWebcam)
+		
+		#przenoszę obiekt WorkerStream do nowego wątku
+		self.WorkerStream.moveToThread(self.ThreadStream)
+		
+		#jeśli obiekt klasy Camera, wyślę sygnał FinishedSignal, to wątek, który obsługiwał streamowanie się zakończy
+		self.WorkerStream.FinishedSignal.connect(self.ThreadStream.quit)
+		
+		#jeśli nowy wątek zostanie uruchomiony to
+		#zostanie wykonana funkcja startCamcorderStream() z klasy Camera 
+		self.ThreadStream.started.connect(self.WorkerStream.startCamcorderStream)
+		
+		#uruchamiam nowy wątek
+		self.ThreadStream.start()
+
+	#funkcja zamykająca stream z kamerki
+	def closeFrontCamcorderStream(self):
+		os.system("rm temp/stream")
+		self.close()
+	#slot, który wyświetla w etykiecie VideoLabel obiekt QPixmap otrzymany od obiektu klasy Camera
+	def streamFromFrontWebcam(self,ResizedFrame):
+		self.VideoLabel.setPixmap(ResizedFrame)
+		self.VideoLabel.show()
 	def takePhoto(self):
-		pass
-	def takeSequencePhotos(self):
-		pass
+		os.system("touch temp/photo")
 
 #Klasa odpowiadająca za BackCameraWindow, czyli za forms/back_camera_window.py
-from forms import back_camera_window
-class BackCameraWindow(QMainWindow, back_camera_window.Ui_BackCameraWindow):
+class BackCameraWindow(QMainWindow, blank_window.Ui_BlankWindow):
 	def __init__(self):
 		super(self.__class__, self).__init__()
 		self.setupUi(self) 
 
 		#przypisuje konkretną funkcję do przycisku i sygnał
-		self.Take_Photo.clicked.connect(lambda: self.takePhoto())
-		self.Sequence_Photos.clicked.connect(lambda: self.takeSequencePhotos())
 		self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 		self.setStyleSheet(open("resources/style.qss", "r").read())
+		self.show()
+
+		self.Back.clicked.connect(lambda: self.closeBackCamcorderStream())
+		
+		#tworze etykiete, w której wyświetlą się ramki QPixmap "pobrane" z kamerki
+		self.VideoLabel = QLabel(self)
+		#ustalam pozycję i wymiary: x, y, szerokość, wysokość
+		self.VideoLabel.setGeometry(QtCore.QRect(0, 0, 840, 540))
+		
+		#Rysuję przycisk zrób zdjęcie
+		self.TakePhoto=RadioPlayWindow.drawControlFMButton(self,"TakePhoto",860,160,"#26d8fc","camera.png")
+		self.TakePhoto.clicked.connect(lambda: self.takePhoto())
+		self.TakePhoto.show()
+		#dodaje rysowanie etykiety
+		self.TakePhotoLabel=RadioPlayWindow.drawControlButtonLabel(self,860,320,"Zrób zdjęcie")
+		self.TakePhotoLabel.show()
+		
+		#tworze nowy wątek
+		self.ThreadStream = QThread()
+		#tworzę obiekt, który dziedziczy po QObject
+		#dzięki niemu będzie możliwość obsługi slotów i sygnałów
+		self.WorkerStream = Camera("/dev/BackCamcorder")
+		
+		#jeśli obiekt klasy Camera wyślę sygnał "StreamSignal", który zawiera w sobie obiekt QPixmap
+		#to funkcja streamFromBackWebcam() go obsłuży
+		#czyli "wklei" go do etykiety VideoLabel, a potem tę etykietę wyświetli
+		self.WorkerStream.StreamSignal.connect(self.streamFromBackWebcam)
+		
+		#przenoszę obiekt WorkerStream do nowego wątku
+		self.WorkerStream.moveToThread(self.ThreadStream)
+		
+		#jeśli obiekt klasy Camera, wyślę sygnał FinishedSignal, to wątek, który obsługiwał streamowanie się zakończy
+		self.WorkerStream.FinishedSignal.connect(self.ThreadStream.quit)
+		
+		#jeśli nowy wątek zostanie uruchomiony to
+		#zostanie wykonana funkcja startCamcorderStream() z klasy Camera 
+		self.ThreadStream.started.connect(self.WorkerStream.startCamcorderStream)
+		
+		#uruchamiam nowy wątek
+		self.ThreadStream.start()
+
 	
-	#funkcję(sloty) do obsługi przycisków
+	#funkcja zamykająca stream z kamerki
+	def closeBackCamcorderStream(self):
+		os.system("rm temp/stream")
+		self.close()
+	#slot, który wyświetla w etykiecie VideoLabel obiekt QPixmap otrzymany od obiektu klasy Camera
+	def streamFromBackWebcam(self,ResizedFrame):
+		self.VideoLabel.setPixmap(ResizedFrame)
+		self.VideoLabel.show()
 	def takePhoto(self):
-		pass
-	def takeSequencePhotos(self):
-		pass
+		os.system("touch temp/photo")
 
 #Klasa odpowiadająca za MultimediaWindow czyli za forms/multimedia_window.py
 #wyświetla listę multimedialnych przycisków (netflix, spotify itd.)
