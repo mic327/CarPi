@@ -332,6 +332,7 @@ class SelectFMWindow(QMainWindow, blank_window.Ui_BlankWindow):
 from forms import radio_play_window
 #moduł do obsługi czasu
 import datetime
+from PyQt5.QtGui import QPixmap
 
 from subprocess import check_output
 FMName=0
@@ -351,6 +352,33 @@ class RadioPlayWindow(QMainWindow, radio_play_window.Ui_RadioPlayWindow):
 		
 		#obiekt do operacji na bazie danych
 		self.ListStationsObject=ListStations(kind)
+
+		#wyświetlam logo stacji
+		#tworze etykiete, w której wyświetlą się obiekt QPixmap, czyli logo
+		self.LogoLabel = QLabel(self)
+		#ustalam pozycję i wymiary: x, y, szerokość, wysokość
+		self.LogoLabel.setGeometry(QtCore.QRect(387, 20, 250, 250))
+		
+		#tworzę dynamiczną nazwę pliku, który zawiera logo stacji radiowej
+		FileLogo=FMName+".png"
+		
+		#uruchamiam konstruktor taki?
+		#QImage(const QString &fileName, const char *format = nullptr)
+		self.QImageLogo = QtGui.QImage("resources/FMLogo/"+FileLogo)
+			
+		#konwertuję obiekt QImage na obiekt QPixmap
+		self.QPixmapLogo = QtGui.QPixmap.fromImage(self.QImageLogo)
+			
+		#tworzę instancję obiektu QPixmao
+		self.PixmapLogo = QPixmap(self.QPixmapLogo)
+		
+		#"wklejam: obiekt QPixmap do obiektu QLabel, czyli do etykiety
+		self.LogoLabel.setPixmap(self.PixmapLogo)
+		
+		#wyświetlam etykietę, czyli logo
+		self.LogoLabel.show()
+			
+
 
 		#sprawdzam czy nagrywanie jest już aktywne
 		#nagrywanie dla konkretnej stacji
@@ -386,9 +414,11 @@ class RadioPlayWindow(QMainWindow, radio_play_window.Ui_RadioPlayWindow):
 			#Etykieta
 			self.FavouritedLabel=self.drawControlButtonLabel(247,510,"Ulubione")
 			self.FavouritedLabel.show()
-			#Rysuję przycisk usuń/dodaj do ulubionych
+			#Rysuję przycisk dodaj do ulubionych
 			self.AddtoFavouritedButton=self.drawControlFMButton("Dodaj",437,350,"#13de00","add.png")
 			self.AddtoFavouritedButton.show()
+			#Dodanie slotu
+			self.AddtoFavouritedButton.clicked.connect(lambda: self.useControlFMButton(self.sender().objectName()))
 			#dodaje rysowanie etykiety
 			self.AddtoFavouritedLabel=self.drawControlButtonLabel(437,510,"Dodaj do ulubionych")
 			self.AddtoFavouritedLabel.show()
@@ -439,7 +469,7 @@ class RadioPlayWindow(QMainWindow, radio_play_window.Ui_RadioPlayWindow):
 		if(sender=="Normalne"):
 				#analogicznie jak wyżej
 				self.trigger.emit()
-				self.close()				
+				self.close()
 				FMWindowList = SelectFMWindow('normal')
 				FMWindowList.show()
 		#dodawanie danej stacji do ulubionych
@@ -456,13 +486,6 @@ class RadioPlayWindow(QMainWindow, radio_play_window.Ui_RadioPlayWindow):
 				FMWindowList = SelectFMWindow('favourited')
 				#wyświetlam okno z listą stacji ulubionych
 				FMWindowList.show()
-				#odtwarzam stację
-				#pobieram z bazy częstotliwość danej stacji
-				#a potem ja odtwarzam
-				Frequency=self.ListStationsObject.getStationFrequency(FMName)
-				FMPlayString="sudo pkill -9 aplay;sudo pkill -9 rtl_fm;sudo rtl_fm -f "+str(Frequency)+"e6 -s 200000 -r 48000 | aplay -r 48000 -f S16_LE &"
-				#wykonuje FMPlayString w terminalu linuxa
-				os.system(FMPlayString)
 				#wyświetla widok odtwarzania stacji, j/w
 				self.dialog = RadioPlayWindow(FMName,"favourited")
 				self.dialog.show()
@@ -474,10 +497,6 @@ class RadioPlayWindow(QMainWindow, radio_play_window.Ui_RadioPlayWindow):
 				self.close()
 				FMWindowList = SelectFMWindow('normal')
 				FMWindowList.show()
-				#odtwarzam stację
-				Frequency=self.ListStationsObject.getStationFrequency(FMName)
-				FMPlayString="sudo pkill -9 aplay;sudo pkill -9 rtl_fm;sudo rtl_fm -f "+str(Frequency)+"e6 -s 200000 -r 48000 | aplay -r 48000 -f S16_LE &"
-				os.system(FMPlayString)
 				self.dialog = RadioPlayWindow(FMName,"normal")
 				self.dialog.show()
 		#nagrywanie dźwięku z radia

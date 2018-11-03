@@ -35,9 +35,6 @@ class Ui_RadioPlayWindow(object):
         self.label_10 = QtWidgets.QLabel(self.centralWidget)
         self.label_10.setGeometry(QtCore.QRect(860, 510, 181, 31))
         self.label_10.setObjectName("label_10")
-        self.pushButton = QtWidgets.QPushButton(self.centralWidget)
-        self.pushButton.setGeometry(QtCore.QRect(387, 20, 250, 250))
-        self.pushButton.setObjectName("pushButton")
         RadioPlayWindow.setCentralWidget(self.centralWidget)
 
         self.retranslateUi(RadioPlayWindow)
@@ -48,5 +45,4 @@ class Ui_RadioPlayWindow(object):
         _translate = QtCore.QCoreApplication.translate
         RadioPlayWindow.setWindowTitle(_translate("RadioPlayWindow", "CarPi"))
         self.label_10.setText(_translate("RadioPlayWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">Cofnij</span></p><p><br/></p></body></html>"))
-        self.pushButton.setText(_translate("RadioPlayWindow", "Tu będzie logo stacji"))
 

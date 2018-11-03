@@ -1,6 +1,4 @@
-﻿#jeśli dodaję się lub usuwa stację z ulubionych nie powinno być uruchamiane polecenie rtl_fm | aplay kolejny raz!!
-#kombinacja plus/minus z ulubionych stacji coś nie działa w połączeniu z nagrywaniem stacji, do sprawdzenia!
-import os 
+﻿import os 
 import sys
 from PyQt5.QtCore import *
 from PyQt5 import *

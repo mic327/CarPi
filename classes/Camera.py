@@ -96,7 +96,7 @@ class Camera(QObject):
 			#a potem ta etykieta zostanie wyświetlona
 			self.StreamSignal.emit(ResizedPixmap)
 			
-			#jeśli nie ma tymczasowego pliku stram
+			#jeśli nie ma tymczasowego pliku stream
 			#to zamykam proces streamowania
 			if(isStreaming==False):
 				#uwalniam zasoby kamery i zamykam wszystkie okna OpenCV

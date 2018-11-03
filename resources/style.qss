@@ -43,9 +43,6 @@ QListView::item:selected{
 }
 
 
-#Kamera{
-
-}
 QPushButton:hover:!pressed
 {
   /*border:3px solid red; działa linijka, rozwinąć to*/
