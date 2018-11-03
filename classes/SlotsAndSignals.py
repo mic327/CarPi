@@ -172,7 +172,14 @@ class SelectFMWindow(QMainWindow, blank_window.Ui_BlankWindow):
 		#jeśli będzie otwierana ta sama stacja to nie zostanie ona ponownie uruchomiona
 		#oraz nie zostanie zatrzmane nagrywanie
 		#będzie działać w tle
-		if(StationPlayed!=sender):
+		
+		#drugi warunek wyklucza sytuację, gdy VLC zamknął aplay i rtl_fm
+		#a mamy zamiar ponownie otworzyć tę samą stację
+		#co przed uruchomieniem VLC
+		#gdy get_pid() nie zwróci PID procesu aplay to self.isAplayRun=False
+		self.AplayPID=RadioPlayWindow.get_pid(self,"aplay")
+		self.isAplayRun=isinstance(self.AplayPID,int)
+		if(StationPlayed!=sender or self.isAplayRun==False):
 			os.system(FMPlayString)
 			#zwiększam liczbę odtworzeń
 			#stację wyświetlane są od najczęściej używanych
