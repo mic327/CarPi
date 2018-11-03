@@ -11,8 +11,8 @@ def main():
 	CarPi = QApplication(sys.argv)
 	MainWindowForm = MainWindow()
 
-	MainWindowForm.setWindowFlags(QtCore.Qt.FramelessWindowHint)   #usuwam pasek okna (minimalzacja, zamykanie etc) 
-	MainWindowForm.show()      #wyświetlam formularz
+	MainWindowForm.setWindowFlags(QtCore.Qt.FramelessWindowHint)	#usuwam pasek okna (minimalzacja, zamykanie etc) 
+	MainWindowForm.show()	#wyświetlam formularz
  
 	#bez tego skrypt odrazu się zamknie
 	sys.exit(CarPi.exec_())
