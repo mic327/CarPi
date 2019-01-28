@@ -26,5 +26,13 @@
         <file>forward.png</file>
         <file>add.png</file>
         <file>delete.png</file>
+        <file>video.png</file>
+        <file>edit.png</file>
+        <file>trash.png</file>
+        <file>add_small.png</file>
+        <file>delete_small.png</file>
+        <file>save.png</file>
+        <file>success.png</file>
+        <file>error.png</file>
     </qresource>
 </RCC>

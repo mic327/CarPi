@@ -45,4 +45,3 @@ class Ui_BlankWindow(object):
         _translate = QtCore.QCoreApplication.translate
         BlankWindow.setWindowTitle(_translate("BlankWindow", "CarPi"))
         self.label_10.setText(_translate("BlankWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">Cofnij</span></p><p><br/></p></body></html>"))
-

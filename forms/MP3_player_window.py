@@ -77,4 +77,3 @@ class Ui_MP3PlayerWindow(object):
         self.label_9.setText(_translate("MP3PlayerWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">Playlista</span></p></body></html>"))
         self.label_10.setText(_translate("MP3PlayerWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">Cofnij</span></p><p><br/></p></body></html>"))
         self.label_11.setText(_translate("MP3PlayerWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">Odtwarzaj muzykę z...</span></p></body></html>"))
-

@@ -7,7 +7,7 @@ ListPlaylists{
 }
 /* dlaczego danie tu innego tła psuje działanie suwaka? */
 QScrollBar:vertical{
-	width:70px;
+	width:50px;
 }
 /* strzałka cofania */
 QScrollBar::sub-line:vertical{
@@ -32,8 +32,9 @@ QListView{
 	font-size:20px;
 }
 QListView::item{
-    padding:20px;
+    height:50px;
     margin-bottom:10px;
+    padding:10px 10px 10px 20px;
     background:#f9f9f7;
     border:1px solid #f4f4f2;
 }
@@ -46,4 +47,39 @@ QListView::item:selected{
 QPushButton:hover:!pressed
 {
   /*border:3px solid red; działa linijka, rozwinąć to*/
+}
+
+QComboBox{
+	border:1px solid silver;
+}
+
+/* przycisk ze strzałką obok comboboxa*/
+QComboBox::drop-down {
+	width:50px;
+	background:#fe022c url(:/images/edit.png) no-repeat;
+}
+
+/* lista popup*/
+QComboBox QAbstractItemView{
+	border: 1px solid silver;
+}
+
+QComboBox:item:selected{
+	background:silver;
+}
+
+QMessageBox {
+    background:white;
+    border:1px solid silver;
+}
+
+QMessageBox QLabel {
+	color:black;
+	min-width:300px;
+	min-height:100px;
+}
+QMessageBox QPushButton{
+	min-width:70px;
+	min-height:70px;
+	margin-right:130px;
 }
