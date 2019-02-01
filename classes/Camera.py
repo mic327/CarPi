@@ -20,7 +20,7 @@ class Camera(QObject):
 
 	def startCamcorderStream(self): 
 		#tworze tymczasowy plik, który rozpoczyna lub kończy stream z kamerki
-		os.system('touch temp/stream')
+		os.system('touch /home/pi/Desktop/CarPi/temp/stream')
 
 		#inicjuję odpowiednią kamere
 		Webcam = cv2.VideoCapture(self.CameraDevice)
@@ -68,14 +68,14 @@ class Camera(QObject):
 			ResizedPixmap = Pixmap.scaled(840, 540)
 						
 			#sprawdzam czy istnieje tymczasowy plik stream
-			StreamFile = Path("temp/stream")
+			StreamFile = Path("/home/pi/Desktop/CarPi/temp/stream")
 			if StreamFile.is_file():
 				isStreaming=True
 			else:
 				isStreaming=False	
 				
 			#sprawdzam czy istnieje tymczasowy plik photo
-			PhotoFile = Path("temp/photo")
+			PhotoFile = Path("/home/pi/Desktop/CarPi/temp/photo")
 			if PhotoFile.is_file():
 				#jeśli plik istnieje to robię zdjęcie i usuwam plik temp/photo
 				#generuję nazwę pliku zdjęcia
@@ -84,10 +84,12 @@ class Camera(QObject):
 				#sprawdzam, z której kamery zrobione zdjęcie
 				if(self.CameraDevice=="/dev/FrontCamcorder"):
 					PhotoLocation="/home/pi/Pictures/FrontCamcorder/"+str(PhotoTime)+".png"
+					#PhotoLocation="/home/pi/Pictures/"+str(PhotoTime)+".png"
 				elif(self.CameraDevice=="/dev/BackCamcorder"):
 					PhotoLocation="/home/pi/Pictures/BackCamcorder/"+str(PhotoTime)+".png"
+					#PhotoLocation="/home/pi/Pictures/"+str(PhotoTime)+".png"
 				cv2.imwrite(PhotoLocation,rgbImage)
-				os.system("rm temp/photo")
+				os.system("rm /home/pi/Desktop/CarPi/temp/photo")
 			
 			#emituję sygnał "StreamSignal", który zawiera w sobie 
 			#gotową do wyświetlania ramkę w postaci obiektu QPixmap

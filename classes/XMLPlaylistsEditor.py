@@ -1,22 +1,18 @@
 from xml.dom import minidom
 import datetime
 
-#jak klasa zostanie wywołana z Edit==True
-#to metody nie mają dostępu do self.PlaylistXMLDoc !
-#poprawić
-#trzeba do klasy przekazać jakoś ścieżkę playlisty!
 
 
 class XMLPlaylistsEditor():
 	def __init__(self,Playlist="None"):
-		self.Path="/home/michal/Playlists/"+Playlist
+		self.Path="/home/pi/Playlists/"+Playlist
 
 		#wykona się podczas tworzenia nowej playlisty
 		if(Playlist=="None"):
 			#tworzę plik playlisty
 			i = datetime.datetime.now()
 			DateTime=("%s-%s-%s_%s:%s:%s" % (i.day, i.month, i.year, i.hour, i.minute, i.second))
-			self.Path="/home/michal/Playlists/"+str(DateTime)+".xspf"
+			self.Path="/home/pi/Playlists/"+str(DateTime)+".xspf"
 	
 			#tworzę plik XML
 			self.FileHandler=self.getPlaylistHandle()
@@ -37,7 +33,6 @@ class XMLPlaylistsEditor():
 		self.FileHandler=self.getPlaylistHandle()
 		
 		#dodaję string, który stanie się szkieletem pliku
-		#może być stałą
 		self.Skeleton="<?xml version=\"1.0\" encoding=\"UTF-8\"?><playlist xmlns=\"http://xspf.org/ns/0/\" xmlns:vlc=\"http://www.videolan.org/vlc/playlist/ns/0/\" version=\"1\"><trackList></trackList></playlist>"
 		self.PlaylistXMLDoc=minidom.parseString(self.Skeleton)	
 		
@@ -48,7 +43,7 @@ class XMLPlaylistsEditor():
 			Title=self.PlaylistXMLDoc.createElement("title")
 			
 			#tworzę zawartość elementów
-			TextLocation=self.PlaylistXMLDoc.createTextNode("file:///home/michal/Muzyka/"+str(TitlesList[i]))
+			TextLocation=self.PlaylistXMLDoc.createTextNode("file:///home/pi/Music/"+str(TitlesList[i]))
 			TextTitle=self.PlaylistXMLDoc.createTextNode(str(TitlesList[i]))
 			
 			#wypełniam elementy
